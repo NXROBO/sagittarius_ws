@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_name"                default="sgr532"/>
+  <arg name="robot_model"               default="$(arg robot_name)"/>
+  <arg name="arm_velocity"              default="4000"/>
+  <arg name="arm_acceleration"          default="50"/>
+  <arg name="servo_torque1"             default="1000"/>
+  <arg name="servo_torque2"             default="1000"/>
+  <arg name="servo_torque3"             default="1000"/>
+  <arg name="servo_torque4"             default="1000"/>
+  <arg name="servo_torque5"             default="1000"/>
+  <arg name="servo_torque6"             default="1000"/>
+  <arg name="servo_torque7"             default="1000"/>
+  <arg name="joint_pub_gui"		default="false"/>
+  <arg name="use_joint_pub"		default="false"/>
+  <arg name="just_rviz_control"		default="false"/>
+
+  <include file="$(find sagittarius_descriptions)/launch/description.launch">
+    <arg name="robot_name"  value="$(arg robot_name)"/>
+    <arg name="robot_model" value="$(arg robot_model)"/>  
+  	<arg name="use_joint_pub"		value="$(arg use_joint_pub)"/>
+    <arg name="joint_pub_gui"		value="$(arg joint_pub_gui)"/>
+  </include>
+
+
+  <node name="sdk_sagittarius_arm" pkg="sdk_sagittarius_arm" type="sdk_sagittarius_arm" respawn="true" output="screen" ns="$(arg robot_name)">
+      <param name="robot_name"  value="$(arg robot_name)"/>
+      <param name="robot_model" value="$(arg robot_model)"/>  
+      <param name="arm_velocity"  value="$(arg arm_velocity)"/>
+      <param name="arm_acceleration"  value="$(arg arm_acceleration)"/>
+      <param name="servo_torque1" value="$(arg servo_torque1)"/>
+      <param name="servo_torque2" value="$(arg servo_torque2)"/>
+      <param name="servo_torque3" value="$(arg servo_torque3)"/>
+      <param name="servo_torque4" value="$(arg servo_torque4)"/>
+      <param name="servo_torque5" value="$(arg servo_torque5)"/>
+      <param name="servo_torque6" value="$(arg servo_torque6)"/>
+      <param name="servo_torque7" value="$(arg servo_torque7)"/>
+      <param name="serialname" type="string" value="/dev/sagittarius" />
+      <param name="baudrate" type="string" value="1000000" />
+      <param name="timelimit" type="int" value="5000" />
+      <param name="servo_configs" type="string" value="$(find sdk_sagittarius_arm)/cfg/"/>
+      <param name="just_rviz_control"	type="bool"	value="$(arg just_rviz_control)"/>
+      <param name="servo_control_trajectory" type="bool" value="false" />
+  </node>
+</launch>
