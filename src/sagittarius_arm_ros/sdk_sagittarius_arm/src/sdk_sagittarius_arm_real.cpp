@@ -19,7 +19,6 @@ namespace sdk_sagittarius_arm
         servo_control_trajectory = false;
         execute_joint_traj = false;
         execute_gripper_traj = false;
-        gripper_effort = 0;
         torque_status = true;
 
         if(pnh.getParam("just_rviz_control", rviz_control))
@@ -50,6 +49,8 @@ namespace sdk_sagittarius_arm
 
         arm_get_servo_configs();
         srv_get_robot_info = nh.advertiseService("get_robot_info", &SagittariusArmReal::arm_get_robot_info, this);
+
+        srv_get_servo_info = nh.advertiseService("get_servo_info", &SagittariusArmReal::arm_get_servo_info, this);
 
 /*        pTest = new sdk_sagittarius_arm::CSDarmCommonSerial("/dev/ttyUSB0", "115200", iTimeLimit, nh, pnh); //just for test
         result = pTest->Init();     //just for test*/
@@ -263,6 +264,40 @@ namespace sdk_sagittarius_arm
         }
     }
 
+    bool SagittariusArmReal::arm_get_servo_info(sdk_sagittarius_arm::ServoRtInfo::Request & req, sdk_sagittarius_arm::ServoRtInfo::Response & res)
+    {
+        int t_cnt = 500;
+        if (req.servo_id>0)
+        {
+            pSDKarm->servo_state.flag = 0;
+            pSDKarm->SendGetServoRealTimeInfo(req.servo_id);
+        }    
+        else
+        {
+            ROS_ERROR("the servo id must be more than 0");
+            return false;
+        }    
+        while((pSDKarm->servo_state.flag == 0)&&(t_cnt--))
+        {
+            usleep(1000*2);
+        }
+        if(pSDKarm->servo_state.flag)
+        {
+            res.speed = pSDKarm->servo_state.speed;
+            res.voltage = pSDKarm->servo_state.voltage;
+            res.current = pSDKarm->servo_state.current;
+            res.payload = pSDKarm->servo_state.payload;
+            return true;
+        }
+        else
+        {
+            ROS_ERROR("get the servo state: timeout");
+            return false;
+        }   
+
+
+    }
+
     bool SagittariusArmReal::arm_get_robot_info(sdk_sagittarius_arm::ArmInfo::Request & req, sdk_sagittarius_arm::ArmInfo::Response & res)
     {
         // Parse the urdf model to get joint position and velocity limits
@@ -450,14 +485,6 @@ namespace sdk_sagittarius_arm
                 execute_gripper_traj = false;
                 gripper_action_server->setPreempted();
                 ROS_INFO("Gripper trajectory server preempted by client");
-                return;
-            }
-            ROS_WARN("fabs(gripper_effort)");
-            if (fabs(gripper_effort) > gripper_max_effort)
-            {
-                execute_gripper_traj = false;
-                gripper_action_server->setPreempted();
-                ROS_INFO("Gripper trajectory server preempted itself since max effort reached.");
                 return;
             }
             r.sleep();

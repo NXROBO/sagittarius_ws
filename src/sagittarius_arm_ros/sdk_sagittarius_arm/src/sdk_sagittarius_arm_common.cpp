@@ -105,7 +105,7 @@ namespace sdk_sagittarius_arm
         SendArmLockOrFree(1);
         return ExitSuccess;
     }
-
+#define DEBUG 1
     void CSDarmCommon::print_hex(unsigned char *buf, int len)
     {
     #if DEBUG
@@ -193,7 +193,7 @@ namespace sdk_sagittarius_arm
             {
                 if((dataLength<255)&&(mDataLength<255))
                 {
-                    print_hex(mRecvBuffer, dataLength);
+                    //print_hex(mRecvBuffer, dataLength);
                     memcpy(mFrameBuffer+mDataLength, mRecvBuffer, dataLength);
                     mDataLength = mDataLength+dataLength;
                     if(mFrameBuffer[0] != 0x55)
@@ -206,7 +206,7 @@ namespace sdk_sagittarius_arm
                     if((mFrameBuffer[0]==0x55)&&(mFrameBuffer[1]==0xAA)&&(mFrameBuffer[mFrameBuffer[2]+4]==0x7D)&&(CheckSum(mFrameBuffer)==(unsigned char)mFrameBuffer[mFrameBuffer[2]+3]))  //校验和与头尾比较
                     {
                         //printf("receive data:");
-                        print_hex(mFrameBuffer, mDataLength);
+                        //print_hex(mFrameBuffer, mDataLength);
                         if(mFrameBuffer[4]==0x0A)  //升级相关的命令
                         {
                             printf("升级的命令\n");
@@ -216,7 +216,7 @@ namespace sdk_sagittarius_arm
                             if(mFrameBuffer[3]==0x02)
                                 printf("version is %s\n",mFrameBuffer+5);
                         }
-                        else if(mFrameBuffer[4]==0x06)  //version的命令
+                        else if(mFrameBuffer[4]==0x06)  
                         {
                             if(mFrameBuffer[3]==0x01)
                             {
@@ -225,6 +225,20 @@ namespace sdk_sagittarius_arm
 
                                 //printf("ARM->ROS: %f,%f,%f,%f,%f,%f\n",float(mFrameBuffer[5]|mFrameBuffer[6]<<8)/10,float(mFrameBuffer[7]|mFrameBuffer[8]<<8)/10,float(mFrameBuffer[9]|mFrameBuffer[10]<<8)/10,float(mFrameBuffer[11]|mFrameBuffer[12]<<8)/10,float(mFrameBuffer[13]|mFrameBuffer[14]<<8)/10,float(mFrameBuffer[15]|mFrameBuffer[16]<<8)/10);
                             }
+                        }
+                        else if(mFrameBuffer[4] == CMD_GET_SERVO_RT_INFO)  //舵机状态反馈
+                        {
+                            if(mFrameBuffer[3]==0x02)
+                            {
+                                ROS_INFO("servo is respone CMD_GET_SERVO_RT_INFO");
+                                servo_state.servo_id = mFrameBuffer[5];
+                                servo_state.speed = mFrameBuffer[6]|(mFrameBuffer[7]<<8);
+                                servo_state.payload = mFrameBuffer[8]|(mFrameBuffer[9]<<8);
+                                servo_state.voltage = mFrameBuffer[10];
+                                servo_state.current = mFrameBuffer[11]|(mFrameBuffer[12]<<8);
+                                servo_state.flag = 1;
+                                
+                            }    
                         }
                         else
                         {

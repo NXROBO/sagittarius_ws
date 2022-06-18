@@ -21,11 +21,15 @@
 #include <sdk_sagittarius_arm/sdk_sagittarius_arm_common_serial.h>
 #include <sdk_sagittarius_arm/sdk_sagittarius_arm_parser.h>
 #include <sdk_sagittarius_arm/ArmInfo.h>
+#include <sdk_sagittarius_arm/ServoRtInfo.h>
+
 struct Servo
 {
     std::string name;                                                     // 舵机所在的关节名
     uint8_t servo_id;                                                     // 舵机ID。未启用
 };
+
+
 
 namespace sdk_sagittarius_arm
 {
@@ -49,6 +53,7 @@ namespace sdk_sagittarius_arm
         void arm_write_gripper_command(const std_msgs::Float64 &msg);
         void ControlTorque(const std_msgs::String::ConstPtr &msg);
         void arm_get_servo_configs(void);
+        bool arm_get_servo_info(sdk_sagittarius_arm::ServoRtInfo::Request & req, sdk_sagittarius_arm::ServoRtInfo::Response & res);
         bool arm_get_robot_info(sdk_sagittarius_arm::ArmInfo::Request & req, sdk_sagittarius_arm::ArmInfo::Response & res);
         bool GetAndSetServoAcceleration(sdk_sagittarius_arm::CSDarmCommon *pt);
         bool GetAndSetServoVelocity(sdk_sagittarius_arm::CSDarmCommon *pt);
@@ -66,7 +71,8 @@ namespace sdk_sagittarius_arm
         sdk_sagittarius_arm::CSDarmCommon *pSDKarm;
         sdk_sagittarius_arm::CSDarmCommon *pTest;
         sdk_sagittarius_arm::CSDKarmParser *pParser;
-        ros::ServiceServer srv_get_robot_info;                                                            // Service to get information about the robot arm
+        ros::ServiceServer srv_get_robot_info;                                                    // Service to get information about the robot info
+        ros::ServiceServer srv_get_servo_info;                                                    // Service to get information about the servo info
         ros::Subscriber sub_js, sub_joint_commands, sub_gripper_command, sub_ct;
         float angle[10];
         ros::Timer tmr_joint_traj;
@@ -74,17 +80,15 @@ namespace sdk_sagittarius_arm
         sensor_msgs::JointState joint_states;
         double joint_start_time;
         bool rviz_control;
-        bool servo_control_trajectory;
-        double gripper_effort;                                      // Current gripper effort in mA
-        double gripper_max_effort;                                  // Max allowable gripper effort in mA before the gripper MoveIt trajectory is preempted
+        bool servo_control_trajectory;                                  
         double gripper_start_time;                                  // 爪子控制的开始时间
-        std::vector<double> home_positions;                         // Vector of home positions for the 'arm' related joints - this is just a '0' vector with 'joint_num_write' length
+        std::vector<double> home_positions;                         
         std::vector<double> sleep_positions;   
-        uint8_t *joint_ids_read;                                    // Pointer to first element in a dynamic array of joint IDs (as specified in the 'arm_joints' vector above) to read joint states
+        uint8_t *joint_ids_read;                                    
         uint8_t *joint_ids_write;        
-        std::vector<Servo> all_joints;                              // Vector of all joint names (including gripper and 'single' joints) and their corresponding IDs (not including shadow motors)
-        const std::string robot_name;                               // Name of the robot - contains the robot_model type along with a unique identifier (ex. arm1/wx200)
-        const std::string robot_model;                              // Model type of the robot (ex. wx200)
+        std::vector<Servo> all_joints;                              
+        const std::string robot_name;                               
+        const std::string robot_model;                              
 
     };
 } // sdk_sagittarius_arm

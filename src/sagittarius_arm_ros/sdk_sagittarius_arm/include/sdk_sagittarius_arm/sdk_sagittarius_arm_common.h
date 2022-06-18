@@ -22,6 +22,15 @@
 
 /*Fixed received buffer size*/
 #define RECV_BUFFER_SIZE      1024
+typedef struct 
+{
+    uint8_t flag;                                                         // 控制位。
+    uint8_t servo_id;                                                     // 舵机ID。
+    int16_t speed;                                                       // 实时速度
+    int16_t payload;                                                      // 实时负载
+    uint8_t voltage;                                                     // 实时电压
+    uint16_t current;                                                     // 实时电流
+}Str_ServoState;
 
 namespace sdk_sagittarius_arm
 {
@@ -39,6 +48,8 @@ namespace sdk_sagittarius_arm
         void         UpdateConfig(sdk_sagittarius_arm::SDKSagittariusArmConfig &newConfig, uint32_t level = 0);
         virtual bool RebootDevice();
         sensor_msgs::JointState joint_states;
+        Str_ServoState servo_state;
+
         double       GetExpectedFreq() const
         {
             return dExpectedFreq;
@@ -56,6 +67,8 @@ namespace sdk_sagittarius_arm
         virtual int SetArmAcc(unsigned char acc)=0;
         virtual int SetArmTorque(int torque[])=0;
         virtual int SendSerialData2Arm(char *buf, int length)=0;
+        virtual int SendGetServoRealTimeInfo(unsigned char id)=0;
+
         /*发送舵机的锁与释放命令到机械臂*/
         /**
                              * \param [in]  (onoff) 0：锁住； 1：释放
@@ -85,7 +98,6 @@ namespace sdk_sagittarius_arm
 
         virtual bool DestroyThread(boost::thread **th);
         virtual void print_hex(unsigned char *buf, int len);
-        void DumpLaserMessage(sensor_msgs::LaserScan &msg);
 
     protected:
         diagnostic_updater::Updater mDiagUpdater;

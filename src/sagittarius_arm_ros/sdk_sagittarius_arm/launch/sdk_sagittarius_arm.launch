@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+  
+<launch>
+  <arg name="robot_name"                default="sgr532"/>
+  <arg name="robot_model"               default="$(arg robot_name)"/>
+  <arg name="serialname"                default="/dev/sagittarius" />
+
   <!--  
     The setting of velocity and acceleration is the internal parameter of the 
     servo. If you are using moveit to planning, You need to modify the joint 
@@ -21,21 +27,27 @@
                                 1.57 rad/s^2 = 1024 step/s^2 = 10.24 100step/s^2
 
     arm_velocity and arm_acceleration uses only integer parts.
-  -->
-<launch>
-  <arg name="robot_name"                default="sgr532"/>
-  <arg name="robot_model"               default="$(arg robot_name)"/>
-  <arg name="serialname"                default="/dev/sagittarius" />
-
+   -->
   <arg name="arm_velocity"              default="2048"/>
   <arg name="arm_acceleration"          default="10"/>
-  <arg name="servo_torque1"             default="1000"/>
-  <arg name="servo_torque2"             default="1000"/>
-  <arg name="servo_torque3"             default="1000"/>
-  <arg name="servo_torque4"             default="1000"/>
-  <arg name="servo_torque5"             default="1000"/>
-  <arg name="servo_torque6"             default="1000"/>
-  <arg name="servo_torque7"             default="1000"/>
+
+  <!-- 
+    Each servo torque can be set individually, the range is 0~1000
+
+    If the torque is too low, the speed will be reduced, and the actual 
+    trajectory of the final robot arm may not be the same as planned. Excessive 
+    torque is a safety hazard
+
+    The default value is chosen based on security. Appropriately increase 
+    the torque to improve the trajectory fit
+   -->
+  <arg name="servo_torque1"             default="300"/>
+  <arg name="servo_torque2"             default="300"/>
+  <arg name="servo_torque3"             default="300"/>
+  <arg name="servo_torque4"             default="200"/>
+  <arg name="servo_torque5"             default="300"/>
+  <arg name="servo_torque6"             default="200"/>
+  <arg name="servo_torque7"             default="100"/>
 
   <node name="sdk_sagittarius_arm" pkg="sdk_sagittarius_arm" type="sdk_sagittarius_arm" respawn="true" output="screen" ns="$(arg robot_name)">
       <param name="robot_name"  value="$(arg robot_name)"/>

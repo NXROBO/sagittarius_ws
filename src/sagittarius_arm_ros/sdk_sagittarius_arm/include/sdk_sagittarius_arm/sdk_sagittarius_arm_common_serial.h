@@ -31,6 +31,7 @@ namespace sdk_sagittarius_arm
         virtual int SetArmVel(unsigned short vel);
         virtual int SetArmAcc(unsigned char acc);
         virtual int SetArmTorque(int torque[]);
+        virtual int SendGetServoRealTimeInfo(unsigned char id);
 
         virtual int GetDataGram(unsigned char *receiveBuffer, int bufferSize, int *length);
 

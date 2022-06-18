@@ -80,6 +80,7 @@ generate_dynamic_reconfigure_options(cfg/SDKSagittariusArm.cfg)
  add_service_files(
    FILES
    ArmInfo.srv
+   ServoRtInfo.srv
  )
 ## Generate services in the 'srv' folder
 # add_service_files(

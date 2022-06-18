@@ -101,10 +101,13 @@ namespace sdk_sagittarius_arm
 
     int CSDarmCommonSerial::SendSerialData2Arm(char *buf, int length)
     {
+        static std::mutex m_mutex;
         int n = -1;
         if(mFd > 0)
         {
+            m_mutex.lock();
             n = write(mFd, buf, length);
+            m_mutex.unlock();
         }
         return n;
     }
@@ -191,6 +194,38 @@ namespace sdk_sagittarius_arm
             ROS_ERROR("Write error for req command");
             mDiagUpdater.broadcast(diagnostic_msgs::DiagnosticStatus::ERROR,
                                    "sdk_sagittarius_arm - SendArmLockOrFree: Write command failed!");
+
+            return ExitError;
+        }
+        return ExitSuccess;
+    }
+    //发送读取舵机实时信息的命令
+    int CSDarmCommonSerial::SendGetServoRealTimeInfo(unsigned char id)
+    {
+        unsigned char buf[30];
+        short degree;
+        if(mFd == -1)
+        {
+            /*ROS_ERROR("SendArmLockOrFree: Serial is not open");
+            mDiagUpdater.broadcast(diagnostic_msgs::DiagnosticStatus::ERROR,
+                                   "sdk_sagittarius_arm - SendArmLockOrFree: Serial is not open!");*/
+
+            return ExitError;
+        }
+        buf[0] = 0x55;						//帧头1 55
+        buf[1] = 0xAA;						//帧头2 AA
+        buf[2] = 3;  						//字节数 数据数＋2
+        buf[3] = TYPE_REQUEST_MESSAGE;  	//请求信息
+        buf[4] = CMD_GET_SERVO_RT_INFO; 	//读取舵机实时信息的命令
+        buf[5] = id; 					    //id号
+        buf[6] = CheckSum(buf);				//校验和
+        buf[7] = 0x7D; 						//结束位 
+
+        if(SendSerialData2Arm((char *)buf, 8) != 8)
+        {
+            ROS_ERROR("Write error for req command");
+            mDiagUpdater.broadcast(diagnostic_msgs::DiagnosticStatus::ERROR,
+                                   "sdk_sagittarius_arm - SendGetServoRealTimeInfo: Write command failed!");
 
             return ExitError;
         }

@@ -2,7 +2,7 @@
 #
 # Note that all data that is returned in a vector is organized such that each index
 # corresponds to the joint at the same index as it appears in the joint_states topic.
-# Gripper info is NOT included in the vectors.
+# Gripper info is not included in the vectors.
 #
 # Multiple types of robot information are provided, including:
 #   1) joint_names - the names of all joints in the robot
