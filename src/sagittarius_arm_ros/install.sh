@@ -1,12 +1,12 @@
 
 #检查系统要求
 check_sys(){
-	Version=$(lsb_release -r --short)
-        if [[ "${Version}" == "16.04" ]]; then
+	ubuntu_version=$(lsb_release -r --short)
+        if [[ "${ubuntu_version}" == "16.04" ]]; then
                 ROS_Ver="kinetic"
-        elif [[ "${Version}" == "18.04" ]]; then
+        elif [[ "${ubuntu_version}" == "18.04" ]]; then
                 ROS_Ver="melodic"
-        elif [[ "${Version}" == "20.04" ]]; then
+        elif [[ "${ubuntu_version}" == "20.04" ]]; then
                 ROS_Ver="noetic"
         else
                 echo -e "${Error} SPARK暂不支持当前系统 ${OSDescription} !" && exit 1
@@ -44,7 +44,7 @@ if [ $(dpkg-query -W -f='${Status}' librealsense2 2>/dev/null | grep -c "ok inst
     sudo apt -y install librealsense2-dev=${version}
     sudo apt -y install librealsense2-dbg=${version}
     sudo apt-mark hold librealsense2*
-    sudo apt -y install ros-$ROS_NAME-ddynamic-reconfigure
+    sudo apt -y install ros-${ROS_Ver}-ddynamic-reconfigure
 else
     echo "librealsense2 already installed!"
 fi

@@ -13,18 +13,21 @@
 
 namespace sdk_sagittarius_arm
 {
-    CSDarmCommonSerial::CSDarmCommonSerial(const std::string &serialname, const std::string &baudrate, int &timelimit, ros::NodeHandle& nh, ros::NodeHandle& pnh) :
+    CSDarmCommonSerial::CSDarmCommonSerial(const std::string &serialname, const std::string &baudrate, int &timelimit, ros::NodeHandle& nh, ros::NodeHandle& pnh, bool free_torque):
         CSDarmCommon(nh, pnh),
         mSerialName(serialname),
         mBaudrate(atoi(baudrate.c_str())),
-        mTimeLimit(timelimit)
+        mTimeLimit(timelimit),
+        mExitFreeTorque(free_torque)
+
     {
 
     }
 
     CSDarmCommonSerial::~CSDarmCommonSerial()
     {
-        SendArmLockOrFree(0);
+        if(mExitFreeTorque)
+            SendArmLockOrFree(0);
         CloseDevice();
     }
 

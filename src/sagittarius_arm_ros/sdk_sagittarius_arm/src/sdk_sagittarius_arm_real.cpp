@@ -12,6 +12,8 @@ namespace sdk_sagittarius_arm
     {
         /*Check whether serialname is provided*/
         bool isSerialConnection = false;
+        bool exit_free_torque = false;
+    
         std::string strSerialName;
         std::string strBaudrate;
         bool rviz_coqntrol;
@@ -23,13 +25,15 @@ namespace sdk_sagittarius_arm
 
         if(pnh.getParam("just_rviz_control", rviz_control))
         {
-            //rviz_control = atoi(str_just_rviz_control.c_str());
             ROS_WARN("rviz_control is %d",rviz_coqntrol);
         }
         if(pnh.getParam("servo_control_trajectory", servo_control_trajectory))  //直接使用舵机的规划。
         {
-            //rviz_control = atoi(str_just_rviz_control.c_str());
             ROS_WARN("servo_control_trajectory is %d",servo_control_trajectory);
+        }
+        if(pnh.getParam("exit_free_torque", exit_free_torque))  //程序退出时，是否释放舵机扭矩。
+        {
+            ROS_WARN("exit_free_torque is %d",exit_free_torque);
         }
 
 
@@ -54,7 +58,7 @@ namespace sdk_sagittarius_arm
 
 /*        pTest = new sdk_sagittarius_arm::CSDarmCommonSerial("/dev/ttyUSB0", "115200", iTimeLimit, nh, pnh); //just for test
         result = pTest->Init();     //just for test*/
-        pSDKarm = new sdk_sagittarius_arm::CSDarmCommonSerial(strSerialName, strBaudrate, iTimeLimit, nh, pnh);
+        pSDKarm = new sdk_sagittarius_arm::CSDarmCommonSerial(strSerialName, strBaudrate, iTimeLimit, nh, pnh, exit_free_torque);
         result = pSDKarm->Init();
         sub_ct = nh.subscribe("control_torque", 1, &SagittariusArmReal::ControlTorque, this);
 

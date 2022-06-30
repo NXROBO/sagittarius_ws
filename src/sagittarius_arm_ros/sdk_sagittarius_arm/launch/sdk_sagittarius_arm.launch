@@ -48,6 +48,7 @@
   <arg name="servo_torque5"             default="300"/>
   <arg name="servo_torque6"             default="200"/>
   <arg name="servo_torque7"             default="100"/>
+  <arg name="exit_free_torque"          default="false"/>
 
   <node name="sdk_sagittarius_arm" pkg="sdk_sagittarius_arm" type="sdk_sagittarius_arm" respawn="true" output="screen" ns="$(arg robot_name)">
       <param name="robot_name"  value="$(arg robot_name)"/>
@@ -71,5 +72,7 @@
       
       <param name="just_rviz_control" type="bool" value="false" />
       <param name="servo_control_trajectory" type="bool" value="false" />
+      <param name="exit_free_torque" type="bool" value="$(arg exit_free_torque)" />
+
   </node>
 </launch>

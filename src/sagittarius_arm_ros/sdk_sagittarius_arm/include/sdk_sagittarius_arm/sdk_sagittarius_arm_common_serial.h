@@ -12,7 +12,7 @@ namespace sdk_sagittarius_arm
     class CSDarmCommonSerial : public CSDarmCommon
     {
     public:
-        CSDarmCommonSerial(const std::string &serialname, const std::string &baudrate, int &timelimit, ros::NodeHandle& nh, ros::NodeHandle& pnh);
+        CSDarmCommonSerial(const std::string &serialname, const std::string &baudrate, int &timelimit, ros::NodeHandle& nh, ros::NodeHandle& pnh, bool free_torque);
         virtual ~CSDarmCommonSerial();
 
     protected:
@@ -44,7 +44,7 @@ namespace sdk_sagittarius_arm
         std::string                  mSerialName;
         int                          mBaudrate;
         int                          mTimeLimit;
-
+        int                          mExitFreeTorque;
     };
 
 } /*namespace sdk_sagittarius_arm*/
