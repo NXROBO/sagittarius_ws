@@ -1,0 +1,22 @@
+<launch>
+  <!-- 机械臂 -->
+  <arg name="robot_name" default="sgr532"/>
+  <arg name="robot_model" default="$(arg robot_name)"/>
+  <include file="$(find sagittarius_moveit)/launch/demo_true.launch" />
+  <node pkg="sagittarius_object_color_detector" type="sgr_ctrl.py" name="sgr_ctrl_node" output="screen" ns="$(arg robot_name)"/>
+
+  <!-- 摄像头 -->
+  <arg name="video_dev" default="/dev/usb_cam" />
+  <include file="$(find sagittarius_object_color_detector)/launch/usb_cam.launch">
+    <arg name="video_dev"	value="$(arg video_dev)"/>
+  </include>
+
+  <!-- 抓取例程 -->
+  <arg name="color_type" default="blue" doc="color type [blue, red, green, customize]"/>
+  <arg name="vision_config" default="$(find sagittarius_object_color_detector)/config/vision_config.yaml"/>
+  <node pkg="sagittarius_object_color_detector" type="grasp_once.py" name="grasp_once_node" output="screen">
+    <param name ="vision_config" value = "$(arg vision_config)"/>
+    <param name ="color_type" value = "$(arg color_type)"/>
+  </node>
+
+</launch>

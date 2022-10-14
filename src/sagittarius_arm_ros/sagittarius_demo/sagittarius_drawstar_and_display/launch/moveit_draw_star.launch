@@ -1,0 +1,17 @@
+<!--Forward_kinematics demo-->
+<launch> 	
+  <arg name="robot_name"                default="sgr532"/>
+  <!--sagittarius_moveit-->
+  <include file="$(find sagittarius_moveit)/launch/demo_true.launch">
+      <arg name="robot_name"    value="$(arg robot_name)"/>
+  </include>
+
+  <!--drow start node-->
+  <node pkg="sagittarius_drawstar_and_display" type="moveit_draw_star.py" name="moveit_draw_star" ns="$(arg robot_name)">
+  </node>
+
+  <!--start script-->
+  <node pkg="sagittarius_drawstar_and_display" type="new_terminal_send_topic.sh" name="send_topic">
+  </node>
+
+</launch>

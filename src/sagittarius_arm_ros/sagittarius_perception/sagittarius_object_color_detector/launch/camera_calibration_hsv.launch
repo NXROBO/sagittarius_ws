@@ -1,0 +1,29 @@
+<launch>
+  <!-- 机械臂 -->
+  <arg name="robot_name" default="sgr532"/>
+  <arg name="robot_model" default="$(arg robot_name)"/>
+  <include file="$(find sagittarius_moveit)/launch/demo_true.launch" />
+  <node pkg="sagittarius_object_color_detector" type="sgr_ctrl.py" name="sgr_ctrl_node" output="screen" ns="$(arg robot_name)"/>
+
+  <!-- 摄像头 -->
+  <arg name="video_dev" default="/dev/usb_cam" />
+  <include file="$(find sagittarius_object_color_detector)/launch/usb_cam.launch">
+    <arg name="video_dev"	value="$(arg video_dev)"/>
+  </include>
+
+  <!--视觉定位-->
+  <node pkg="sagittarius_object_color_detector" type="calibration.py" name="calibration_node" output="screen">
+    <param name ="vision_config" value = "$(find sagittarius_object_color_detector)/config/vision_config.yaml"/>
+  </node>
+
+  <!--控制机械臂的定点移动-->
+  <node pkg="sagittarius_object_color_detector" type="calibration_pose.py" name="calibration_pose_node" output="screen">
+    <param name="arm_name" value="$(arg robot_name)" />
+  </node>
+  <!--在rviz显示-->
+  <!--<arg name="rvizconfig" default="$(find sagittarius_object_color_detector)/rviz/carry_object_$(arg camera_type_tel).rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>-->
+
+  <!--是否开始 -->
+  <node pkg="sagittarius_object_color_detector" type="publish_start_to_cali.sh" name="pstc" />
+</launch>

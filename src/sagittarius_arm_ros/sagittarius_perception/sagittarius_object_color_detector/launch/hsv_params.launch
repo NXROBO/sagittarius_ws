@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="video_dev" default="/dev/usb_cam" />
+
+  <include file="$(find sagittarius_object_color_detector)/launch/usb_cam.launch">
+    <arg name="video_dev"	value="$(arg video_dev)"/>
+  </include>
+
+  <rosparam command="load" file="$(find sagittarius_object_color_detector)/config/vision_config.yaml" />
+
+  <node name="HSVParams_node" pkg="sagittarius_object_color_detector" type="HSVParams_node" output="screen" />
+  
+  <node name="rqt_reconfigure" pkg="rqt_reconfigure" type="rqt_reconfigure" respawn="false" output="screen" />
+
+</launch>

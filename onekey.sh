@@ -276,38 +276,82 @@ puppet_control(){
 	esac
 }
 
+drawstar_and_display(){
+	PROJECTPATH=$(cd `dirname $0`; pwd)
+	source ${PROJECTPATH}/devel/setup.bash
+	echo -e "${Info}" 
+	echo -e "${Info} 机械臂画五角星同步仿真显示" 
+	echo -e "${Info} 程序启动后会新开一个终端，需要开始运行时在新终端按回车键" 
+	echo -e "${Info}" 
+	echo && stty erase ^? && read -p "按回车键（Enter）继续：" 
+	print_command "roslaunch sagittarius_drawstar_and_display moveit_draw_star.launch"
+	roslaunch sagittarius_drawstar_and_display moveit_draw_star.launch
+}
+
 #2d-object_color_detection_and_grab
 2d-object_color_detection_and_grab(){
 	PROJECTPATH=$(cd `dirname $0`; pwd)
 	source ${PROJECTPATH}/devel/setup.bash
 	if [ ! -n "$(lsusb -d 0c45:64ab)" ]; then
-		echo -e "${Error}没有找到臂上摄像头，需要配件-2D摄像头的支持，或者检查摄像头数据线是否正确连接"
+		echo -e "${Error}没有找到臂上摄像头，检查摄像头数据线是否正确连接"
 	else
 		echo -e "${Info}" 
 		echo -e "${Info}颜色识别抓取 (Eye In Hand)" 
 		echo -e "${Info}" 
 		echo -e "${Info}抓取场景不变情况下可重复抓取" 	
-		echo -e "${Info}更换抓取场景需重新标定与设置 HSV 值" 
-		echo -e "${Info}正在使用臂上摄像头"
+		echo -e "${Info}更换抓取场景后需要设置 HSV 值与重新标定" 
 		echo -e "${Info}" 
+		echo -e "${Info}正在使用臂上摄像头"
 		echo -e "${Info}请选择相关选择：
-		${Green_font_prefix}1.${Font_color_suffix} 手眼标定 (Eye In Hand)
-		${Green_font_prefix}2.${Font_color_suffix} 设置 HSV 值
-		${Green_font_prefix}3.${Font_color_suffix} 抓取
-		${Green_font_prefix}4.${Font_color_suffix} 退出请输入：Ctrl + c" 
-		echo && stty erase ^? && read -p "请输入数字 [1-3]：" asrnum
+	${Green_font_prefix}1.${Font_color_suffix} 设置物品 HSV 值
+	${Green_font_prefix}2.${Font_color_suffix} 手眼标定 (Eye In Hand)
+	${Green_font_prefix}3.${Font_color_suffix} 进行一次抓取示例
+	${Green_font_prefix}4.${Font_color_suffix} 颜色分类 (颜色投放位置固定)
+	${Green_font_prefix}5.${Font_color_suffix} 颜色分类 (配合地图寻找投放位置)
+	${Green_font_prefix}6.${Font_color_suffix} 退出请输入：Ctrl + c" 
+		echo && stty erase ^? && read -p "请输入数字 [1-5]：" asrnum
 		case "$asrnum" in
 			1)
-			print_command "roslaunch sagittarius_object_color_detector camera_calibration_hsv.launch"
-			roslaunch sagittarius_object_color_detector camera_calibration_hsv.launch 
-			;;
-			2)
+			echo -e "${Info} 设置物品 HSV 值"
+			echo -e "${Info} 使用 rqt_reconfigure 设置 ${Red_font_prefix}红色${Font_color_suffix}、${Green_font_prefix}绿色${Font_color_suffix}、${Blue_font_prefix}蓝色${Font_color_suffix}方块的 HSV 值"
+			echo -e "${Info} 动态参数服务器名为 HSVParams_node"
+			echo -e "${Info} 设置完成后在本终端 Ctrl+C 退出程序，程序自动保存 HSV 值"
+			echo && stty erase ^? && read -p "按回车键（Enter）继续：" foonum
 			print_command "roslaunch sagittarius_object_color_detector hsv_params.launch"
 			roslaunch sagittarius_object_color_detector hsv_params.launch
 			;;
+			2)
+			echo -e "${Info} 手眼标定 (Eye In Hand)"
+			echo -e "${Info} 按照接下来的提示进行标定"
+			echo -e "${Info} 默认使用${Blue_font_prefix}蓝色${Font_color_suffix}方块"
+			echo && stty erase ^? && read -p "按回车键（Enter）继续：" foonum
+			print_command "roslaunch sagittarius_object_color_detector camera_calibration_hsv.launch "
+			roslaunch sagittarius_object_color_detector camera_calibration_hsv.launch 
+			;;
 			3)
+			echo -e "${Info} 机械臂进行一次抓取的示例"
+			echo -e "${Info} 把一个方块放在识别区中心，机械臂自动抓取并放置到 R 区"
+			echo -e "${Info} 请勿放杂物在 R 区，默认识别${Blue_font_prefix}蓝色${Font_color_suffix}方块"
+			echo && stty erase ^? && read -p "按回车键（Enter）继续：" foonum
 			print_command "roslaunch sagittarius_object_color_detector object_pick.launch"
 			roslaunch sagittarius_object_color_detector object_pick.launch
+			;;
+			4)
+			echo -e "${Info} 对方块进行颜色分类 (投放位置固定)"
+			echo -e "${Info} 机械臂识别抓取并分类方块，投放在固定的地方"
+			echo -e "${Info} 把容器按颜色${Red_font_prefix}红${Font_color_suffix}、${Green_font_prefix}绿${Font_color_suffix}、${Blue_font_prefix}蓝${Font_color_suffix}顺序扣好，在正对机械臂正面时，识别区的右侧按列方向放好"
+			echo -e "${Info} 机械臂投放位置固定，请配合投放位置调整容器的位置"
+			echo && stty erase ^? && read -p "按回车键（Enter）继续：" foonum
+			print_command "roslaunch sagittarius_object_color_detector color_classification_fixed.launch"
+			roslaunch sagittarius_object_color_detector color_classification_fixed.launch
+			;;
+			5)
+			echo -e "${Info} 对方块进行颜色分类 (配合地图寻找投放位置)"
+			echo -e "${Info} 把投放容器任意放置在地图的 ABCD 区上，机械臂抓取方块并投放对应颜色的容器"
+			echo -e "${Info} 机械臂通过识别容器颜色确定投放区，请勿遮挡容器颜色"
+			echo && stty erase ^? && read -p "按回车键（Enter）继续：" foonum
+			print_command "roslaunch sagittarius_object_color_detector color_classification.launch"
+			roslaunch sagittarius_object_color_detector color_classification.launch
 			;;
 			*)
 			echo -e "${Error} 错误，退出"
@@ -320,7 +364,9 @@ puppet_control(){
 3d_perception_detection_and_grab(){
 	PROJECTPATH=$(cd `dirname $0`; pwd)
 	source ${PROJECTPATH}/devel/setup.bash
-	if [ ! -n "$(lsusb -d 8086:0b07)" ]; then
+	if [ -n "$(roscd sagittarius_perception)" ]; then
+		echo -e "${Info}没有找到高配版的视觉套件功能包，如需要高配版请联系我们市场部"
+	elif [ ! -n "$(lsusb -d 8086:0b07)" ]; then
 		echo -e "${Error}没有找到3D视觉摄像头, 检查摄像头数据线是否正确连接"
 	else
 		echo -e "${Info}" 
@@ -330,9 +376,9 @@ puppet_control(){
 		echo -e "${Info}标定完成后请勿移动摄像头" 
 		echo -e "${Info}" 
 		echo -e "${Info}请选择相关选择：
-		${Green_font_prefix}1.${Font_color_suffix} 手眼标定 (eye-to-hand)
-		${Green_font_prefix}2.${Font_color_suffix} 颜色抓取分类
-		${Green_font_prefix}3.${Font_color_suffix} 退出请输入：Ctrl + c" 
+	${Green_font_prefix}1.${Font_color_suffix} 手眼标定 (eye-to-hand)
+	${Green_font_prefix}2.${Font_color_suffix} 颜色抓取分类
+	${Green_font_prefix}3.${Font_color_suffix} 退出请输入：Ctrl + c" 
 		echo && stty erase ^? && read -p "请输入数字 [1-2]：" asrnum
 		case "$asrnum" in
 			1)
@@ -485,7 +531,9 @@ echo -e "
   ${Green_font_prefix}  3.${Font_color_suffix} 逆运动学示例
   ${Green_font_prefix}  4.${Font_color_suffix} 单个舵机控制
   ${Green_font_prefix}  5.${Font_color_suffix} rosbag录制与播放机械臂动作
-  ${Green_font_prefix}  6.${Font_color_suffix} 多机械臂动作实时复现\c"
+  ${Green_font_prefix}  6.${Font_color_suffix} 多机械臂动作实时复现
+  ${Green_font_prefix}  7.${Font_color_suffix} 机械臂画五角星同步仿真显示
+  ${Green_font_prefix}  8.${Font_color_suffix} 通过臂上摄像头进行视觉抓取\c"
 
 
 echo -e "
@@ -521,9 +569,12 @@ case "$num" in
 	puppet_control
 	;;
 	7)
-	2d-object_color_detection_and_grab
+	drawstar_and_display
 	;;
 	8)
+	2d-object_color_detection_and_grab
+	;;
+	9)
 	3d_perception_detection_and_grab
 	;;
 	100)
