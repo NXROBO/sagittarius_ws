@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
 )
 
-find_package(OpenCV)
+find_package(OpenCV REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -163,7 +163,7 @@ include_directories(/usr/local/include/yaml-cpp)
 FIND_LIBRARY(YAML_CPP_LIBRARIES yaml-cpp)
 add_executable(HSVParams_node src/HSVParams_node.cpp) # executable
 add_dependencies(HSVParams_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(HSVParams_node ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES})
+target_link_libraries(HSVParams_node ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES} ${OpenCV_LIBRARIES})
 
 
 #############
