@@ -1,15 +1,15 @@
-如何使用
+how to use
 
-手眼标定 Eye in hand
-roslaunch sagittarius_object_color_detector camera_calibration_hsv.launch 
-限行回归的参数保存在 vision_config.yaml 中
+Eye in hand calibration
+`ros launch sagittarius_object_color_detector camera_calibration_hsv.launch`
+The parameters of line-limited regression are saved in `vision_config.yaml`
 
-HSV 颜色范围设置
-roslaunch sagittarius_object_color_detector hsv_params.launch
-四种颜色的hsv参数保存在 vision_config.yaml 中
+HSV color range settings
+`ros launch sagittarius_object_color_detector hsv_params.launch`
+The hsv parameters of the four colors are saved in `vision_config.yaml`
 
-拾取一次，抓取方块的颜色默认是蓝色
-roslaunch sagittarius_object_color_detector object_pick.launch
+Pick up once, the color of the grabbed block is blue by default
+`ros launch sagittarius_object_color_detector object_pick.launch`
 
-颜色分类的例程，投放位置是固定
-roslaunch sagittarius_object_color_detector color_classification_fixed.launch
+Routine for color classification, placement is fixed
+`ros launch sagittarius_object_color_detector color_classification_fixed.launch`

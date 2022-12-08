@@ -115,18 +115,18 @@ void HSVParamsNode::HSVFilterCallback(const sensor_msgs::ImageConstPtr &msg)
         ROS_ERROR("cv_bridge exception: %s", e.what());
     }
 
-    // 图像裁剪
+    // image cropping
     cv::Rect select = cv::Rect(0, 0, 640, 480);
     cv::Mat &img_input = cv_ptr->image;
 
     img_input = img_input(select);
 
-    // 彩色图像的灰度值归一化，颜色空间转换，输出为HSV格式图像
+    // Normalize the gray value of the color image, convert the color space, and output the image in HSV format
     cv::Mat image2hsv, bgr;
     img_input.convertTo(bgr, CV_32FC3, 1.0 / 255, 0);
     cv::cvtColor(bgr, image2hsv, cv::COLOR_BGR2HSV);
 
-    cv::Mat mask = cv::Mat::zeros(bgr.size(), CV_32FC3);
+    cv::Mat mask = cv::Mat::zeros(bgr. size(), CV_32FC3);
     if (hsv_tmp.hmin > hsv_tmp.hmax)
     {
         cv::Mat mask1;
@@ -151,11 +151,11 @@ void HSVParamsNode::HSVFilterCallback(const sensor_msgs::ImageConstPtr &msg)
 
     if (filter_enable)
     {
-        cv::Mat output = cv::Mat::zeros(bgr.size(), CV_32FC3);
+        cv::Mat output = cv::Mat::zeros(bgr. size(), CV_32FC3);
         // for (int r = 0; r < bgr.rows; r++)
-        //     for (int c = 0; c < bgr.cols; c++)
-        //         if (mask.at<uchar>(r, c) == 255)
-        //             output.at<cv::Vec3f>(r, c) = bgr.at<cv::Vec3f>(r, c);
+        // for (int c = 0; c < bgr.cols; c++)
+        // if (mask.at<uchar>(r, c) == 255)
+        // output.at<cv::Vec3f>(r, c) = bgr.at<cv::Vec3f>(r, c);
         bgr.copyTo(output, mask);
         cv::imshow(WINDOW_NAME, output);
     }
@@ -229,7 +229,7 @@ int main(int argc, char **argv)
     {
         ros::spinOnce();
 
-        loop_rate.sleep();
+        loop_rate. sleep();
     }
 
     return 0;

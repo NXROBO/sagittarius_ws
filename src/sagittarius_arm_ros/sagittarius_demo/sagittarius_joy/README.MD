@@ -1,37 +1,37 @@
-使用方式
+How to use
 
-连接 xbox 或 ps4, 新终端输入下面指令
+Connect xbox or ps4, enter the following command in a new terminal
 
 ```
 roslaunch sagittarius_joy joy_demo.launch
 ```
-`controller_type` 是手柄类型，可选为[xbox360, ps4]，默认使用 xbox 手柄
+`controller_type` is the controller type, which can be [xbox360, ps4], and the xbox controller is used by default
 
-然后可以使用手柄控制机械臂
+The robotic arm can then be controlled using the handle
 
-控制方式
+control method
 
-左摇杆前/后: end-effect x 加/减
-左摇杆左/右: 腰部旋转 左摆/右摆
-左摇杆摁下: 无
+Left stick front/back: end-effect x plus/minus
+Left joystick left/right: waist rotation swing left/right
+Left joystick down: None
 
-右摇杆前/后: end-effect pitch 往下看/往上看
-右摇杆左/右: end-effect y 加/减
-右摇杆摁下: 特殊设置 摆正夹爪
+Right stick front/back: end-effect pitch look down/up
+Right joystick left/right: end-effect y plus/minus
+Press the right joystick: special setting straighten the gripper
 
-LB(L1): 高度减少
-RB(R1): 高度增加
+LB(L1): height reduction
+RB(R1): height increase
 
-BACK(SHARE): 逆时针翻滚
-START(OPTION): 顺时针翻滚
+BACK(SHARE): roll counterclockwise
+START(OPTION): scroll clockwise
 
-LT(L2): 夹爪减少间距
-RT(R2): 夹爪增加间距
+LT(L2): Reduced gap between jaws
+RT(R2): Gripper jaws increase spacing
 
-方向键上/下: 速度增加/减少
-方向键上/下: 无
+Arrow keys up/down: speed increase/decrease
+Arrow keys up/down: None
 
-B(cycle): 预设姿态 home
-A(cross): 预设姿态 sleep
+B(cycle): default posture home
+A(cross): default posture sleep
 
-长按 power 1秒: 扭矩输出切换
+Long press power for 1 second: switch torque output

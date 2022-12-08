@@ -6,7 +6,7 @@
       <arg name="robot_name"    value="$(arg robot_name)"/>
   </include>
 
-  <!--drow start node-->
+  <!--draw star node-->
   <node pkg="sagittarius_drawstar_and_display" type="moveit_draw_star.py" name="moveit_draw_star" ns="$(arg robot_name)">
   </node>
 
