@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 '''
-Descripttion: Saggitarius moveit application action
+Description: Saggitarius moveit application action
 version: 1.00
 Author: shudong.hong@nxrobo.com
-Company: NXROBO (深圳创想未来机器人有限公司)
+Company: NXROBO (Shenzhen Creative Future Robot Co., Ltd.)
 LastEditors: shudong.hong@nxrobo.com
 '''
 
@@ -14,7 +14,7 @@ import rospy
 import sys
 from moveit_msgs.msg import MoveGroupActionFeedback
 import moveit_commander
-import tf.transformations as transformations
+import tf. transformations as transformations
 
 import actionlib
 from sagittarius_object_color_detector.msg import SGRCtrlAction, SGRCtrlGoal, SGRCtrlResult, SGRCtrlFeedback
@@ -28,53 +28,53 @@ class MoveItSGRTool:
         moveit_commander.roscpp_initialize(sys.argv)
         self.robot_name = rospy.get_param("~robot_name", "sgr532")
 
-        # 是否需要使用笛卡尔空间的运动规划，获取参数，如果没有设置，则默认为True，即走直线
-        self.cartesian = rospy.get_param('~cartesian', False)
+        # Do you need to use Cartesian space motion planning, get the parameters, if not set, the default is True, that is, go straight
+        self. cartesian = rospy. get_param('~cartesian', False)
 
-        # 初始化需要使用move group控制的机械臂中的arm group
+        # Initialize the arm group in the robotic arm that needs to be controlled by the move group
         self.arm_group = moveit_commander.MoveGroupCommander('sagittarius_arm')
 
-        # 初始化需要使用move group控制的机械臂中的gripper group
+        # Initialize the gripper group in the robotic arm that needs to be controlled by the move group
         self.gripper = moveit_commander.MoveGroupCommander(
             'sagittarius_gripper')
 
-        # 当运动规划失败后，允许重新规划
+        # When motion planning fails, allow replanning
         self.arm_group.allow_replanning(False)
 
         self.reference_frame = rospy.get_namespace()[1:] + 'base_link'
-        # 设置目标位置所使用的参考坐标系
+        # Set the reference coordinate system used by the target position
         self.arm_group.set_pose_reference_frame(self.reference_frame)
 
-        # 设置目标位置所使用的参考坐标系
+        # Set the reference coordinate system used by the target position
         self.gripper.set_pose_reference_frame(self.reference_frame)
 
-        # 设置位置(单位：米)和姿态（单位：弧度）的允许误差
+        # Set the allowable error of position (unit: meter) and attitude (unit: radian)
         self.arm_group.set_goal_position_tolerance(0.001)
         self.arm_group.set_goal_orientation_tolerance(0.001)
 
         self.gripper.set_goal_joint_tolerance(0.001)
-        # 设置允许的最大速度和加速度
+        # Set the maximum velocity and acceleration allowed
         self.arm_group.set_max_acceleration_scaling_factor(0.5)
         self.arm_group.set_max_velocity_scaling_factor(0.5)
 
-        # 设置末端效应点link的名称
+        # Set the name of the end effect point link
         if (end_effector is not None):
             self.arm_group.set_end_effector_link(end_effector)
 
-        # 获取终端link的名称
+        # Get the name of the terminal link
         self.end_effector_link = self.arm_group.get_end_effector_link()
         rospy.loginfo("end effector link: %s" % self.end_effector_link)
 
         #
         rospy.Subscriber("move_group/feedback", MoveGroupActionFeedback,
-                         self._move_group_feedback_callback)
+                        self._move_group_feedback_callback)
         self.moveit_group_status = "IDLE"
 
-        # 控制机械臂先回到初始化位置
+        # Control the robotic arm to return to the initial position first
         if init_pose:
             self.arm_group.set_named_target('home')
-            self.arm_group.go()
-            rospy.sleep(1)
+            self. arm_group. go()
+            rospy. sleep(1)
 
     def __del__(self):
         moveit_commander.roscpp_shutdown()
@@ -85,40 +85,40 @@ class MoveItSGRTool:
 
     def isPlanSuccess(self, px, py, pz, roll=0, pitch=0, yaw=0):
         self.arm_group.set_pose_target([px, py, pz, roll, pitch, yaw])
-        plan = self.arm_group.plan()
+        plan = self. arm_group. plan()
 
         if ispython3:
             plan = plan[1]
 
-        return len(plan.joint_trajectory.points) != 0
+        return len(plan. joint_trajectory. points) != 0
 
     def gripper_catch(self):
         self.gripper.set_joint_value_target([-0.021, -0.021])
         ret = self.gripper.go()
         if ret:
-            rospy.sleep(2)
+            rospy. sleep(2)
         return ret
 
     def gripper_open(self):
         self.gripper.set_joint_value_target([0.0, 0.0])
         ret = self.gripper.go()
         if ret:
-            rospy.sleep(2)
+            rospy. sleep(2)
         return ret
 
     def to_pose_eular(self, times, px, py, pz, roll=0, pitch=0, yaw=0):
         self.arm_group.set_pose_target([px, py, pz, roll, pitch, yaw])
-        plan = self.arm_group.plan()
+        plan = self. arm_group. plan()
 
-        if ispython3:  # python3 返回的是列表，下标1是 RobotTrajectory，也可以用列表中 error_code:MoveItErrorCodes 判断
+        if ispython3: # python3 returns a list, subscript 1 is RobotTrajectory, and can also be judged by error_code:MoveItErrorCodes in the list
             plan = plan[1]
 
-        if len(plan.joint_trajectory.points) != 0:
+        if len(plan. joint_trajectory. points) != 0:
             self.arm_group.execute(plan)
-            rospy.sleep(times)
+            rospy. sleep(times)
             return True
         else:
-            rospy.logwarn("plan can not found!")
+            rospy.logwarn("plan can not be found!")
             return False
 
     def ee_target_offset(self, px, py, pz, roll=0, pitch=0, yaw=0, ee_type='grasp'):
@@ -134,24 +134,24 @@ class MoveItSGRTool:
 
     def ee_xyz_get_rpy(self, x, y, z):
         # Get yaw by Arctangent of x and y
-        yaw = math.atan2(y, x)
+        yaw = math. atan2(y, x)
         roll = 0
         pitch = 0
 
-        # 使用三角函数求 pitch 的近似值
-        # 模型：机械臂抽象成等腰三角形，机械臂末端到坐标原点的距离为底，机械臂臂长为两腰总和
-        # 求底边角
+        # Use trigonometry to approximate pitch
+        # Model: The robotic arm is abstracted into an isosceles triangle, the distance from the end of the robotic arm to the origin of coordinates is the base, and the length of the robotic arm is the sum of the two waists
+        # Find the bottom corner
         a = 0.532 / 2
         b = 0.532 / 2
-        c = math.sqrt(x*x + y*y + z*z)
+        c = math. sqrt(x*x + y*y + z*z)
         if a + b <= c:
-            # 三角形不成立
+            # triangle does not hold
             pitch = 0
         else:
-            # 已知三角边长求指定角度
+            # Know the side length of the triangle to find the specified angle
             pitch = math.acos((a*a - b*b - c*c)/(-2*b*c)) - math.asin(z / c)
 
-            # 限定范围
+            # limited range
             if pitch > 1.57:
                 pitch = 1.57
             elif pitch < 0:
@@ -161,21 +161,21 @@ class MoveItSGRTool:
     def pose_stay(self):
         self.arm_group.set_joint_value_target(
             [0, 1.4, -1.48, 0, 1.6, 0])
-        self.arm_group.go()
+        self. arm_group. go()
 
     def stop(self):
         self.arm_group.set_named_target('home')
-        self.arm_group.go()
-        rospy.sleep(1)
+        self. arm_group. go()
+        rospy. sleep(1)
         self.arm_group.set_named_target('sleep')
-        self.arm_group.go()
-        rospy.sleep(1)
+        self. arm_group. go()
+        rospy. sleep(1)
         self.gripper.set_joint_value_target([0, 0])
         self.gripper.go()
-        rospy.sleep(0.5)
+        rospy. sleep(0.5)
 
 
-class CencelException(Exception):
+class CecelException(Exception):
     pass
 
 
@@ -185,7 +185,7 @@ class SGRCtrlActionServer:
         rospy.wait_for_service('get_servo_info', 3)
         self.servo_info_srv = rospy.ServiceProxy('get_servo_info', ServoRtInfo)
         self._server = actionlib.SimpleActionServer(
-            'sgr_ctrl', SGRCtrlAction, self.execute, False)
+            'sgr_ctrl', SGRCtrlAction, self. execute, False)
         self._server.start()
 
     def execute(self, goal:SGRCtrlGoal):
@@ -194,7 +194,7 @@ class SGRCtrlActionServer:
         resp = SGRCtrlResult()
         fb = SGRCtrlFeedback()
 
-        # 初始化夹爪
+        # Initialize the gripper
         fb.step = fb.EXEC_GRASP
         self._server.publish_feedback(fb)
         if goal.grasp_type is SGRCtrlGoal.GRASP_CLOSE:
@@ -202,42 +202,42 @@ class SGRCtrlActionServer:
         elif goal.grasp_type is SGRCtrlGoal.GRASP_OPEN:
             self.sgr_tool.gripper_open()
 
-        # 开始规划
+        # start planning
         fb.step = fb.PLANNING
         self._server.publish_feedback(fb)
         if goal.action_type is goal.ACTION_TYPE_DEFINE_STAY:
-            # 指定动作
+            # specify action
             fb.step = fb.EXEC_POSITION
             self._server.publish_feedback(fb)
             self.sgr_tool.pose_stay()
         elif goal.action_type is goal.ACTION_TYPE_DEFINE_SAVE:
-            # 指定动作
+            # specify action
             fb.step = fb.EXEC_POSITION
             self._server.publish_feedback(fb)
             self.sgr_tool.stop()
         else:
             if goal.action_type in [SGRCtrlGoal.ACTION_TYPE_XYZ_RPY, SGRCtrlGoal.ACTION_TYPE_PICK_XYZ_RPY, SGRCtrlGoal.ACTION_TYPE_PUT_XYZ_RPY]:
-                # 指定末端姿态
-                roll = goal.pos_roll
-                pitch = goal.pos_pitch
-                yaw = goal.pos_yaw
+                # Specify end pose
+                roll = goal. pos_roll
+                pitch = goal. pos_pitch
+                yaw = goal. pos_yaw
             else:
-                # 动态计算末端姿态
-                roll, pitch, yaw = self.sgr_tool.ee_xyz_get_rpy(goal.pos_x, goal.pos_y, goal.pos_z)
-            
+                # Dynamically calculate the end pose
+                roll, pitch, yaw = self. sgr_tool. ee_xyz_get_rpy(goal. pos_x, goal. pos_y, goal. pos_z)
+        
             x, y, z, roll, pitch, yaw = self.sgr_tool.ee_target_offset(
-                goal.pos_x, goal.pos_y, goal.pos_z,
+                goal. pos_x, goal. pos_y, goal. pos_z,
                 roll, pitch, yaw
             )
 
-            # 检查姿态是否能到达
+            # Check if pose is reachable
             try:
                 if not self.sgr_tool.isPlanSuccess(x, y, z, roll, pitch, yaw):
                     raise
-                if goal.action_type in [
-                    SGRCtrlGoal.ACTION_TYPE_PICK_XYZ,
+                if goal. action_type in [
+                    SGRCtrlGoal. ACTION_TYPE_PICK_XYZ,
                     SGRCtrlGoal.ACTION_TYPE_PICK_XYZ_RPY,
-                    SGRCtrlGoal.ACTION_TYPE_PUT_XYZ,
+                    SGRCtrlGoal. ACTION_TYPE_PUT_XYZ,
                     SGRCtrlGoal.ACTION_TYPE_PUT_XYZ_RPY
                 ]:
                     if not self.sgr_tool.isPlanSuccess(x, y, z + 0.04, roll, pitch, yaw):
@@ -250,45 +250,45 @@ class SGRCtrlActionServer:
                 self._server.set_aborted(resp)
                 return
             
-            # 执行规划
+            # execute plan
             fb.step = fb.EXEC_POSITION
             self._server.publish_feedback(fb)
             try:
-                # 抓取与放置动作
-                if goal.action_type in [
-                    SGRCtrlGoal.ACTION_TYPE_PICK_XYZ,
+                # Grab and place actions
+                if goal. action_type in [
+                    SGRCtrlGoal. ACTION_TYPE_PICK_XYZ,
                     SGRCtrlGoal.ACTION_TYPE_PICK_XYZ_RPY,
-                    SGRCtrlGoal.ACTION_TYPE_PUT_XYZ,
+                    SGRCtrlGoal. ACTION_TYPE_PUT_XYZ,
                     SGRCtrlGoal.ACTION_TYPE_PUT_XYZ_RPY
                 ]:
                     if self._server.is_preempt_requested():
-                        raise CencelException("Preempt !!!")
+                        raise CecelException("Preempt !!!")
                     self.sgr_tool.to_pose_eular(1, x, y, z + 0.04, roll, pitch, yaw)
 
                     if self._server.is_preempt_requested():
-                        raise CencelException("Preempt !!!")
+                        raise CecelException("Preempt !!!")
                     self.sgr_tool.to_pose_eular(0.2, x, y, z, roll, pitch, yaw)
 
                     fb.step = fb.EXEC_GRASP
                     self._server.publish_feedback(fb)
                     if self._server.is_preempt_requested():
-                        raise CencelException("Preempt !!!")
+                        raise CecelException("Preempt !!!")
                     if goal.action_type in [SGRCtrlGoal.ACTION_TYPE_PICK_XYZ, SGRCtrlGoal.ACTION_TYPE_PICK_XYZ_RPY]:
                         self.sgr_tool.gripper_catch()
                     elif goal.action_type in [SGRCtrlGoal.ACTION_TYPE_PUT_XYZ, SGRCtrlGoal.ACTION_TYPE_PUT_XYZ_RPY]:
                         self.sgr_tool.gripper_open()
-                    
+                
                     fb.step = fb.EXEC_POSITION
                     self._server.publish_feedback(fb)
                     if self._server.is_preempt_requested():
-                        raise CencelException("Preempt !!!")
+                        raise CecelException("Preempt !!!")
                     self.sgr_tool.to_pose_eular(0.2, x, y, z + 0.08, roll, pitch, yaw)
 
                     # if self._server.is_preempt_requested():
-                    #     raise CencelException("Preempt !!!")
-                    # self.sgr_tool.pose_stay()
+                    # raise CecelException("Preempt !!!")
+                    # self. sgr_tool. pose_stay()
 
-                    # 夹爪判断
+                    # Gripper judgment
                     if goal.action_type in [SGRCtrlGoal.ACTION_TYPE_PICK_XYZ, SGRCtrlGoal.ACTION_TYPE_PICK_XYZ_RPY]:
                         ret = self.servo_info_srv.call(ServoRtInfoRequest(servo_id=7))
                         if abs(ret.payload) < 24:
@@ -296,28 +296,28 @@ class SGRCtrlActionServer:
                             self._server.set_aborted(resp)
                             return
 
-                # 执行某个动作
+                # perform an action
                 else:
                     if self._server.is_preempt_requested():
-                        raise CencelException("Preempt !!!")
+                        raise CecelException("Preempt !!!")
                     self.sgr_tool.to_pose_eular(0.2, x, y, z, roll, pitch, yaw)
-            except CencelException as e:
-                rospy.logwarn(e)
+            except CecelException as e:
+                rospy. logwarn(e)
                 resp.result = resp.PREEMPT
                 self._server.set_aborted()
             except Exception as e:
                 rospy.logerr(e)
                 resp.result = resp.ERROR
                 self._server.set_aborted()
-                
+            
         resp.result = resp.SUCCESS
         self._server.set_succeeded(resp)
 
 
 if __name__ == '__main__':
     rospy.init_node("sgr_ctrl_action", anonymous=True)
-    rospy.sleep(5)
+    rospy. sleep(5)
 
     ser = SGRCtrlActionServer()
 
-    rospy.spin()
+    rospy. spin()

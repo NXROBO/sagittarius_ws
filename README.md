@@ -1,55 +1,58 @@
 # NXROBO Spark sagittarius_arm_ros
 
 
-## 说明 Description
-- 本产品为初学者体验版，一个基于六个自由度和末端夹具的机械臂。可以用来学习moveit的设备。
-- <img src="https://raw.githubusercontent.com/NXROBO/sagittarius_ws/master/src/sagittarius_arm_ros/sdk_sagittarius_arm/picture/nxrobo_sagittarius.png" width="300">
+## Description
+- This product is a trial version for beginners, a robotic arm based on six degrees of freedom and end grippers. 
+Equipment that can be used to learn rviz's MoveIt.
 
-## 列表 Table of Contents
+<img src="https://raw.githubusercontent.com/NXROBO/sagittarius_ws/master/src/sagittarius_arm_ros/sdk_sagittarius_arm/picture/nxrobo_sagittarius.png" width="300" >
 
-* [功能包说明packages-overview](#功能包说明packages-overview)
-* [使用usage](#使用usage)
-* [视频展示Video](#视频展示Video)
+## Table of Contents
 
-## 功能包说明packages-overview
+* [Packages](#Packages)
+* [Usage](#Usage)
+* [Video](#Video)
 
-* ***sagittarius_demo*** : 机械臂的DEMO。
-* ***sagittarius_descriptions*** : 机械臂的描述功能包。
-* ***sagittarius_moveit*** : 机械臂的moveit功能包。
-* ***sagittarius_toolboxes*** : 机械臂的基础工具箱。
-* ***sak_sagittarius_arm*** : 机械臂的SDK源码。
-* ***install.sh*** : 安装脚本。
-## 使用usage
+## Packages
 
-### 系统要求 Prequirement
+* ***sagittarius_demo*** : Robotic Arm Demo
+* ***sagittarius_descriptions*** : A package of description functions (Models) for the robotic arm.
+* ***sagittarius_moveit*** : The MoveIt package for robotic arms.
+* ***sagittarius_toolboxes*** : Basic toolbox for robotic arms.
+* ***sak_sagittarius_arm*** : The SDK source code for the robotic arm.
+* ***install.sh*** : Installation Script
+## Usage
+
+### Prerequisites
 
 * System:	Ubuntu 16.04 ,Ubuntu 18.04 or Ubuntu 20.04
 * ROS Version:	kinetic, melodic or noetic
 
-### 下载安装 Download and install
-* 下载工作空间 Download the workspace:
+### Download and Install
+* Clone the workspace:
 ```yaml
     cd ~
     git clone https://github.com/NXROBO/sagittarius_ws.git
 ```
-* 安装依赖库 Install libraries and dependencies:
+* Install libraries and dependencies:
 ```yaml
     cd sagittarius_ws
     ./onekey.sh
-    根据提示选择 103 ，然后回车键进行安装，或者执行
+    # Select 103, then press Enter to install dependancies
     ./src/sagittarius_arm_ros/install.sh
 ```
-### 编译运行 compile and run
+### Compile and Run
 ```yaml
     cd ~/sagittarius_ws
     catkin_make
 ```
-* 如果编译一切正常，可根据提示运行相关例程。If everything goes fine, test the examples as follow:
+* If everything goes fine, test the examples as follows:
 ```yaml
     ./onekey.sh
-    根据提示选择相应功能的序号。或者相关功能的启动命令，如：
+    # Select any example from the list
     source devel/setup.bash
     roslaunch sagittarius_moveit demo_true.launch
 ```
 
-## 视频展示Video
+## Video
+TBA

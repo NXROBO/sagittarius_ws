@@ -9,7 +9,7 @@ import math
 
 
 def move2pose(times, px, py, pz, ox, oy, oz, ow):
-    wpose = deepcopy(arm.get_current_pose(end_effector_link).pose)  # 拷贝对象
+    wpose = deepcopy(arm.get_current_pose(end_effector_link).pose) # copy object
     wpose.position.x = px
     wpose.position.y = py
     wpose.position.z = pz
@@ -17,9 +17,9 @@ def move2pose(times, px, py, pz, ox, oy, oz, ow):
     wpose.orientation.y = oy
     wpose.orientation.z = oz
     wpose.orientation.w = ow
-    arm.set_pose_target(wpose)  # 自由曲线
+    arm.set_pose_target(wpose) # free curve
     arm.go()
-    rospy.sleep(times)
+    rospy. sleep(times)
 
 
 def eular2orientation(pitch, yaw, roll):
@@ -37,46 +37,46 @@ def eular2orientation(pitch, yaw, roll):
 if __name__ == "__main__":
     moveit_commander.roscpp_initialize(sys.argv)
 
-    # 初始化ROS节点
+    # Initialize the ROS node
     rospy.init_node('moveit_cartesian_demo', anonymous=True)
 
-    # 是否需要使用笛卡尔空间的运动规划，获取参数，如果没有设置，则默认为True，即走直线
-    cartesian = rospy.get_param('~cartesian', False)
+    # Do you need to use Cartesian space motion planning, get the parameters, if not set, the default is True, that is, go straight
+    cartesian = rospy. get_param('~cartesian', False)
 
-    # 初始化需要使用move group控制的机械臂中的arm group
+    # Initialize the arm group in the robotic arm that needs to be controlled by the move group
     arm = MoveGroupCommander('sagittarius_arm')
 
-    # 初始化需要使用move group控制的机械臂中的gripper group
+    # Initialize the gripper group in the robotic arm that needs to be controlled by the move group
     gripper = MoveGroupCommander('sagittarius_gripper')
-    gripper1 = moveit_commander.MoveGroupCommander('sagittarius_gripper')
-    # 当运动规划失败后，允许重新规划
-    arm.allow_replanning(False)
+    gripper1 = moveit_commander. MoveGroupCommander('sagittarius_gripper')
+    # When motion planning fails, allow replanning
+    arm. allow_replanning(False)
 
-    # 设置目标位置所使用的参考坐标系
+    # Set the reference coordinate system used by the target position
     arm.set_pose_reference_frame('world')
 
-    # 设置目标位置所使用的参考坐标系
+    # Set the reference coordinate system used by the target position
     gripper.set_pose_reference_frame('world')
 
-    # 设置位置(单位：米)和姿态（单位：弧度）的允许误差
+    # Set the allowable error of position (unit: meter) and attitude (unit: radian)
     arm.set_goal_position_tolerance(0.0001)
     arm.set_goal_orientation_tolerance(0.0001)
 
     gripper1.set_goal_joint_tolerance(0.001)
-    # 设置允许的最大速度和加速度
+    # Set the maximum velocity and acceleration allowed
     arm.set_max_acceleration_scaling_factor(0.5)
     arm.set_max_velocity_scaling_factor(0.5)
 
-    # 获取终端link的名称
-    end_effector_link = arm.get_end_effector_link()
+    # Get the name of the terminal link
+    end_effector_link = arm. get_end_effector_link()
 
-    # 归位
+    # reset
     arm.set_named_target('home')
     arm.go()
-    rospy.sleep(1)
+    rospy. sleep(1)
 
-    # 获取当前位置为起始点
-    pose = deepcopy(arm.get_current_pose(end_effector_link).pose)
+    # Get the current position as the starting point
+    pose = deepcopy(arm. get_current_pose(end_effector_link). pose)
     px = pose.position.x
     py = pose.position.y
     pz = pose.position.z
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     oy = pose.orientation.y
     oz = pose.orientation.z
     ow = pose.orientation.w
-    while not rospy.is_shutdown(): # 运动到正方形四个点
+    while not rospy.is_shutdown(): # Move to a square with four points
         px -= 0.1
         move2pose(0.5, px, py, pz, ox, oy, oz, ow)
         if rospy.is_shutdown():
@@ -114,14 +114,14 @@ if __name__ == "__main__":
 
     arm.set_named_target('home')
     arm.go()
-    rospy.sleep(1)
+    rospy. sleep(1)
     arm.set_named_target('sleep')
     arm.go()
-    rospy.sleep(1)
+    rospy. sleep(1)
     gripper1.set_joint_value_target([0, 0])
     gripper1.go()
-    rospy.sleep(0.5)
+    rospy. sleep(0.5)
 
-    # 关闭并退出moveit
+    # Close and exit moveit
     moveit_commander.roscpp_shutdown()
     moveit_commander.os._exit(0)

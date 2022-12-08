@@ -23,8 +23,8 @@ arm_cmd_sub = None
 
 xarray_list = [0.25, 0.225, 0.275, 0.275, 0.225]
 yarray_list = [0, 0.025, 0.025, -0.025, -0.025]
-xarray = np.zeros(count)
-yarray = np.zeros(count)
+xarray = np. zeros(count)
+yarray = np. zeros(count)
 xc_array = np.zeros(count)
 yc_array = np.zeros(count)
 
@@ -64,13 +64,13 @@ def image_callback(data):
     size_max = 0
     for i, c in enumerate(contours):
         rect = cv2.minAreaRect(c)
-        box = cv2.boxPoints(rect)
+        box = cv2. boxPoints(rect)
         box = np.int0(box)
         x_mid = (box[0][0] + box[2][0] + box[1][0] + box[3][0]) / 4
         y_mid = (box[0][1] + box[2][1] + box[1][1] + box[3][1]) / 4
-        w = math.sqrt((box[0][0] - box[1][0])**2 + (box[0][1] - box[1][1])**2)
-        h = math.sqrt((box[0][0] - box[3][0])**2 + (box[0][1] - box[3][1])**2)
-        size.append(w * h)
+        w = math. sqrt((box[0][0] - box[1][0])**2 + (box[0][1] - box[1][1])**2)
+        h = math. sqrt((box[0][0] - box[3][0])**2 + (box[0][1] - box[3][1])**2)
+        size. append(w * h)
         if size[i] > size_max:
             size_max = size[i]
             index = i
@@ -90,46 +90,46 @@ def command_callback(data):
         yc_array[index] = yc
         xarray[index] = xarray_list[index]
         yarray[index] = yarray_list[index]
-        print("%d/%d,pose x,y: %.4f,%.4f. cam x,y: %d,%d" %
-              (index+1, count, xarray[index], yarray[index], xc, yc))
+        print("%d/%d,pose x,y: %.4f,%.4f.cam x,y: %d,%d" %
+            (index+1, count, xarray[index], yarray[index], xc, yc))
         # reshape to 2D array for linear regression
-        xc_array = xc_array.reshape(-1, 1)
-        yc_array = yc_array.reshape(-1, 1)
-        xarray = xarray.reshape(-1, 1)
-        yarray = yarray.reshape(-1, 1)
+        xc_array = xc_array. reshape(-1, 1)
+        yc_array = yc_array. reshape(-1, 1)
+        xarray = xarray. reshape(-1, 1)
+        yarray = yarray. reshape(-1, 1)
         index = index + 1
-        arm_cmd_sub.publish(String("next"))
+        arm_cmd_sub. publish(String("next"))
     if index == count:
         Reg_x_yc = LinearRegression().fit(yc_array, xarray)
         Reg_y_xc = LinearRegression().fit(xc_array, yarray)
         k1 = Reg_x_yc.coef_[0][0]
-        b1 = Reg_x_yc.intercept_[0]
+        b1 = Reg_x_yc. intercept_[0]
         k2 = Reg_y_xc.coef_[0][0]
-        b2 = Reg_y_xc.intercept_[0]
+        b2 = Reg_y_xc. intercept_[0]
         content['LinearRegression']['k1'] = float(k1)
         content['LinearRegression']['b1'] = float(b1)
         content['LinearRegression']['k2'] = float(k2)
         content['LinearRegression']['b2'] = float(b2)
 
-        filename = rospy.get_param("~vision_config")
+        filename = rospy. get_param("~vision_config")
         try:
             with open(filename, "w") as f:
-                yaml.dump(content, f)
+                yaml. dump(content, f)
         except:
             rospy.logerr("can't not open hsv file: ", filename)
 
         index = 0
-        print("Linear Regression for x and yc is :  x = %.5fyc + (%.5f)" % (k1, b1))
-        print("Linear Regression for y and xc is :  y = %.5fxc + (%.5f)" % (k2, b2))
-        print("******************************************************")
-        print("     finish the calibration. Press ctrl-c to exit     ")
-        print("             标定完成. 然后 Ctrl-C 退出程序             ")
-        print("******************************************************")
+        print("Linear Regression for x and yc is : x = %.5fyc + (%.5f)" % (k1, b1))
+        print("Linear Regression for y and xc is : y = %.5fxc + (%.5f)" % (k2, b2))
+        print("********************************************** *****")
+        print("finish the calibration. Press ctrl-c to exit")
+        print("Calibration complete. Then Ctrl-C to exit the program ")
+        print("********************************************** *****")
 
 
 def msg_callback(data):
     global start_flag
-    if(data.data == "start"):
+    if(data. data == "start"):
         start_flag = 1
 
 
@@ -139,12 +139,12 @@ def main():
     global lower_HSV
     global upper_HSV
     rospy.init_node('eye_in_hand_calibration', anonymous=True)
-    r1 = rospy.Rate(5)  # 0.2s
+    r1 = rospy.Rate(5) # 0.2s
 
-    filename = rospy.get_param("~vision_config")
+    filename = rospy. get_param("~vision_config")
     try:
         with open(filename, "r") as f:
-            content = yaml.load(f.read())
+            content = yaml. load(f. read())
     except:
         rospy.logerr("can't not open hsv file: ", filename)
         exit(1)
@@ -155,7 +155,7 @@ def main():
     print("Calibration node wait to start----")
     sub3 = rospy.Subscriber("cali_cmd_topic", String, msg_callback)
     while not start_flag:
-        r1.sleep()
+        r1. sleep()
 
     sub1 = rospy.Subscriber("/usb_cam/image_raw", Image, image_callback)
     sub2 = rospy.Subscriber("cali_pix_topic", String, command_callback)

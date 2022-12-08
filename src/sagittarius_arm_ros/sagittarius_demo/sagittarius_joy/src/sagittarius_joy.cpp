@@ -67,6 +67,7 @@ void joy_state_cb(const sensor_msgs::Joy &msg)
   else if (msg.axes.at(cntlr["EE_X"]) <= -threshold)
     joy_cmd.ee_x_cmd = sagittarius_joy::arm_joy::EE_X_DEC;
 
+
   // Check the ee_y_cmd
   if (msg.axes.at(cntlr["EE_Y"]) >= threshold)
     joy_cmd.ee_y_cmd = sagittarius_joy::arm_joy::EE_Y_INC;
