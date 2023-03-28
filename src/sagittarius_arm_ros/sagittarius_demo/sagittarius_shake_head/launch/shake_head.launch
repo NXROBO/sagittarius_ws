@@ -1,0 +1,13 @@
+<!--Forward_kinematics demo-->
+<launch> 	
+  <arg name="robot_name" default="sgr532"/>
+  <!--sagittarius_moveit-->
+  <include file="$(find sagittarius_moveit)/launch/demo_true.launch">
+      <arg name="robot_name"    value="$(arg robot_name)"/>
+  </include>
+
+  <!--draw star node-->
+  <node pkg="sagittarius_shake_head" type="shake_head.py" name="shake_head" ns="$(arg robot_name)">
+  </node>
+
+</launch>
