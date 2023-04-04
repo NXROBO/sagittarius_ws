@@ -1,0 +1,38 @@
+digraph G {
+node [shape=box];
+"sgr532/base_link" [label="sgr532/base_link"];
+"sgr532/link1" [label="sgr532/link1"];
+"sgr532/link2" [label="sgr532/link2"];
+"sgr532/link3" [label="sgr532/link3"];
+"sgr532/link4" [label="sgr532/link4"];
+"sgr532/link5" [label="sgr532/link5"];
+"sgr532/link6" [label="sgr532/link6"];
+"sgr532/ar_tag_link" [label="sgr532/ar_tag_link"];
+"sgr532/link_grasping_frame" [label="sgr532/link_grasping_frame"];
+"sgr532/link_gripper_left" [label="sgr532/link_gripper_left"];
+"sgr532/link_gripper_right" [label="sgr532/link_gripper_right"];
+"sgr532/usb_cam_link" [label="sgr532/usb_cam_link"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"sgr532/base_link" -> "joint1" [label="xyz: 0.045 0 0.07 \nrpy: 0 -0 0"]
+"joint1" -> "sgr532/link1"
+"sgr532/link1" -> "joint2" [label="xyz: 0 -0.0001 0.055 \nrpy: 0 -0 0"]
+"joint2" -> "sgr532/link2"
+"sgr532/link2" -> "joint3" [label="xyz: 0.033 -0.0001 0.179 \nrpy: 0 -0 0"]
+"joint3" -> "sgr532/link3"
+"sgr532/link3" -> "joint4" [label="xyz: 0.0845 0 0 \nrpy: 0 -0 0"]
+"joint4" -> "sgr532/link4"
+"sgr532/link4" -> "joint5" [label="xyz: 0.08435 0.00065 0 \nrpy: 0 -0 0"]
+"joint5" -> "sgr532/link5"
+"sgr532/link5" -> "joint6" [label="xyz: 0.061387 0 0 \nrpy: 0 -0 0"]
+"joint6" -> "sgr532/link6"
+"sgr532/link6" -> "joint_ar_tag_frame" [label="xyz: -0.018 0 0.036 \nrpy: 0 -0 0"]
+"joint_ar_tag_frame" -> "sgr532/ar_tag_link"
+"sgr532/link6" -> "joint_grasping_frame" [label="xyz: 0.0557 0 0 \nrpy: 0 -0 0"]
+"joint_grasping_frame" -> "sgr532/link_grasping_frame"
+"sgr532/link6" -> "joint_gripper_left" [label="xyz: 0.0695 0.033 0 \nrpy: 0 -0 0"]
+"joint_gripper_left" -> "sgr532/link_gripper_left"
+"sgr532/link6" -> "joint_gripper_right" [label="xyz: 0.0695 -0.033 0 \nrpy: 0 -0 0"]
+"joint_gripper_right" -> "sgr532/link_gripper_right"
+"sgr532/link6" -> "joint_usb_cam_frame" [label="xyz: 0.05 0 0.05825 \nrpy: -1.57 -5.55112e-17 -1.57"]
+"joint_usb_cam_frame" -> "sgr532/usb_cam_link"
+}
