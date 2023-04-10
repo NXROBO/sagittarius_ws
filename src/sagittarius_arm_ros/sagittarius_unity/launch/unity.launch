@@ -1,0 +1,20 @@
+<!--Unity Middlewear-->
+<launch> 	
+  <arg name="robot_name" default="sgr532"/>
+  <arg name="debug" default="true"/>
+
+  <!--sagittarius_moveit-->
+  <include file="$(find sagittarius_moveit)/launch/demo_true.launch">
+    <arg name="robot_name"    value="$(arg robot_name)"/>
+  </include>
+
+  <!-- State Publisher Node-->
+  <node name="state_publisher" type="state_publisher.py" pkg="sagittarius_unity" ns="$(arg robot_name)">
+    <param name="rosconsole-bridge/log_level" value="INFO"/>
+    <param name="debug" value="$(arg debug)" />
+  </node>
+
+  <!-- Executor Node -->
+  <!-- <node name="unity_executor" type="executor.py" pkg="sagittarius_unity" ns="$(arg robot_name)"></node> -->
+
+</launch>

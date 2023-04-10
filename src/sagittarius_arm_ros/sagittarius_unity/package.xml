@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>sagittarius_unity</name>
+  <version>0.0.1</version>
+  <description>
+  The sagittarius_unity package
+  This package contains the ROS middlewear responsible for:
+  - Receiving and Publishing the state current state of the real sagittarius arm, ready to be received by a Unity App
+  - Listening for action messages from the Unity App and executing them with the moveit_commader package.
+  </description>
+
+  <maintainer email="andy@todo.todo">andy</maintainer>
+
+  <license>TODO</license>
+
+  <url type="website">https://github.com/WearableComputerLab/sagittarius_ws</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <export></export>
+</package>
