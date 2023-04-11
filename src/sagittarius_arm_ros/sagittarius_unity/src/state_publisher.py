@@ -2,17 +2,25 @@
 
 import rospy
 import logging
+
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Float32
+
 from moveit_commander import RobotCommander, MoveGroupCommander
 
 class StatePublisher:
     def __init__(self, debug=False, logger=None):
         self.debug = debug
         self.logger = logger
-        self.arm_group = MoveGroupCommander("sagittarius_arm")
+
         self.robot = RobotCommander()
-        self.pose_pub = rospy.Publisher("sagittarius_pose", PoseStamped, queue_size=10)
-        self.rate = rospy.Rate(0.2)  # 100hz
+        self.arm_group = MoveGroupCommander("sagittarius_arm")
+        self.gripper_group = MoveGroupCommander("sagittarius_gripper")
+        
+        self.pose_pub = rospy.Publisher("sagittarius_arm_state", PoseStamped, queue_size=10)
+        self.float_pub = rospy.Publisher("sagittarius_gripper_state", Float32, queue_size=10)
+
+        self.rate = rospy.Rate(0.2)  # 0.2hz
         self.run()
 
     def run(self):
@@ -22,14 +30,18 @@ class StatePublisher:
             # Get current pose of arm and gripper
             arm_pose = self.arm_group.get_current_pose()
 
-            # Create PoseStamped messages for arm and gripper poses
+            # Create messages for arm and gripper poses
             arm_msg = PoseStamped()
             arm_msg.header.stamp = rospy.Time.now()
             arm_msg.header.frame_id = self.robot.get_planning_frame()
             arm_msg.pose = arm_pose.pose
 
-            # Publish PoseStamped messages
+            gripper_msg = Float32()
+            gripper_msg.data = self.gripper_group.get_current_joint_values()[0]
+
+            # Publish messages
             self.pose_pub.publish(arm_msg)
+            self.float_pub.publish(gripper_msg)
 
             # Print debugging output if debug flag is set
             if self.debug:
@@ -42,7 +54,8 @@ class StatePublisher:
                     arm_pose.pose.orientation.y,
                     arm_pose.pose.orientation.z,
                     arm_pose.pose.orientation.w
-                ) + "\n")
+                ) + "\n\nGRIPPER:\npos: {:.3f}".format(gripper_msg.data) + "\n")
+
             self.rate.sleep()
 
 if __name__ == '__main__':
