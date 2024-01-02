@@ -161,22 +161,22 @@ def main():
             'found': False,
             'lower_HSV': np.array([0 / 2, 70, 50]),
             'upper_HSV': np.array([40 / 2, 240, 240]),
-            'x': 0.1,
-            'y': 0.18
+            'x': 0.16,
+            'y': 0.24
         },
         'green':{
             'found': False,
             'lower_HSV': np.array([130 / 2, 70, 50]),
             'upper_HSV': np.array([170 / 2, 240, 240]),
-            'x': 0.18,
-            'y': 0.18
+            'x': 0.24,
+            'y': 0.24
         },
         'blue':{
             'found': False,
             'lower_HSV': np.array([200 / 2, 70, 50]),
             'upper_HSV': np.array([250 / 2, 240, 240]),
-            'x': 0.26,
-            'y': 0.18
+            'x': 0.32,
+            'y': 0.24
         }
     }
     

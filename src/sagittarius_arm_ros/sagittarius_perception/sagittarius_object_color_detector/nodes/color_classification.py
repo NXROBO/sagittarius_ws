@@ -407,7 +407,7 @@ class ColorClassificationDemo:
         rospy.logwarn("H=%d S=%d V=%d" % (H, S, V))
         if (90 < H < 120 and 100 < S):
             color_type = 'blue'
-        elif (0 < H < 20 and 100 < S):
+        elif (0 < H < 40 and 100 < S):
             color_type = 'red'
         elif (50 < H < 80 and 100 < S):
             color_type = 'green'
